@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  mariadb:
+    build:
+      context: ./database
+    container_name: coffee-chat-db
+    networks:
+      - coffee-chat-network
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/conf:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: coffee_chat_db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: coffee-chat-backend
+    ports:
+      - "5042:5042"
+    networks:
+      - coffee-chat-network
+    depends_on:
+      - mariadb
+
+networks:
+  coffee-chat-network:
+    driver: bridge
